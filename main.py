@@ -1,10 +1,18 @@
 import webapp2
 
 def build_page(textarea_content):
+    username_label = "<label>Username: </label>"
+    username_input = "<input type='text' name='username' />"
 
+    # submit button
+    submit = "<input type='submit' />"
+
+    # signup form
+    ###
+    
     header = "<h2>Signup</h2>"
 
-    return header
+    return (header + username_label + username_input)
 
 class MainHandler(webapp2.RequestHandler):
 
