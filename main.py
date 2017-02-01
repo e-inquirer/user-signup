@@ -42,8 +42,16 @@ class MainHandler(webapp2.RequestHandler):
         # validation test stub
         self.response.write("<p>"+userName+"</p><p>"+passWord+"</p><p>"+passVerify+"</p><p>"+eMail+"</p>")
 
+
+class Welcome(webapp2.RequestHandler):
+    # validation test stub
+    
+    def get(self):
+        self.response.write("foo bin bar")
+
+
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
 #    ('/signup', Signup),
-#    ('/welcome', Welcome),
+    ('/welcome', Welcome)
 ], debug=True)
