@@ -45,9 +45,10 @@ class MainHandler(webapp2.RequestHandler):
 
 class Welcome(webapp2.RequestHandler):
     # validation test stub
-    
+
     def post(self):
-        self.response.write("foo bin bar")
+        userName = self.request.get("username")
+        self.response.write("Welcome, " + userName + "!")
 
 
 app = webapp2.WSGIApplication([
