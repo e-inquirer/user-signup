@@ -16,12 +16,12 @@ def build_page(textarea_content):
     submit_button = "<input type='submit' />"
 
     # signup form
-    form = ("<form method='post'>" +
+    form = ("<form action=/welcome method='post'>" +
             username_label + username_input + "<br>" +
             pw_label + pw_input + "<br>" +
             pwVerify_label + pwVerify_input + "<br>" +
             email_label + email_input + "<br>" +            
-            submit_button + "<form/")
+            submit_button + "<form/>")
     
     header = "<h2>Signup</h2>"
 
@@ -46,7 +46,7 @@ class MainHandler(webapp2.RequestHandler):
 class Welcome(webapp2.RequestHandler):
     # validation test stub
     
-    def get(self):
+    def post(self):
         self.response.write("foo bin bar")
 
 
