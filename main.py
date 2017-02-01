@@ -8,7 +8,7 @@ def build_page(textarea_content):
     pw_label = "<label>Password: </label>"
     pw_input = "<input type='password' name='password' />"
     pwVerify_label = "<label>Verify Password: </label>"
-    pwVerify_input = "<input type='password' name='pw_verify' />"
+    pwVerify_input = "<input type='password' name='pwVerify' />"
     email_label = "<label>Email (optional): </label>"
     email_input = "<input type='email' name='email' />"
 
@@ -32,6 +32,15 @@ class MainHandler(webapp2.RequestHandler):
     def get(self):
         content = build_page("")
         self.response.write(content)
+
+    def post(self):
+        userName = self.request.get('username')
+        passWord = self.request.get('password')
+        passVerify = self.request.get('pwVerify')
+        eMail = self.request.get('email')
+
+        # validation test stub
+        self.response.write("<p>"+userName+"</p><p>"+passWord+"</p><p>"+passVerify+"</p><p>"+eMail+"</p>")
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
