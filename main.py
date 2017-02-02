@@ -15,31 +15,31 @@ def valid_email(email):
     return not email or email_regEx.match(email)
 
 
-def build_page(UN, PW, EM):
+def build_page(UN, PW, EM, MAIN):
 
     # form fields
     username_label = "<label>Username: </label>"
-    username_input = "<input type='text' name='username' />"
+    username_input = "<input type='text' name='username' value=''/>"
     pw_label = "<label>Password: </label>"
-    pw_input = "<input type='password' name='password' />"
+    pw_input = "<input type='password' name='password' value='' />"
     pwVerify_label = "<label>Verify Password: </label>"
-    pwVerify_input = "<input type='password' name='pwVerify' />"
+    pwVerify_input = "<input type='password' name='pwVerify' value='' />"
     email_label = "<label>Email (optional): </label>"
-    email_input = "<input type='email' name='email' />"
+    email_input = "<input type='email' name='email' value='' />"
 
-    if UN:
+    if UN or MAIN:
         username_html = username_label + username_input + "<br>"
     else:
         username_html = username_label + username_input + "INVALID USERNAME" + "<br>"
 
-    if PW:
+    if PW or MAIN:
         pw_html = pw_label + pw_input + "<br>" 
     else:
-        pw_html = pw_label + pw_input + "INVALID PASSWORD" + "<br>" 
+        pw_html = pw_label + pw_input + "INVALID PASSWORD or VERIFICATION DOESN'T MATCH" + "<br>" 
 
     pw_verify_html = pwVerify_label + pwVerify_input + "<br>" 
 
-    if EM:
+    if EM or MAIN:
         email_html = email_label + email_input + "<br>"
     else:
         email_html = email_label + email_input + "INVALID EMAIL" + "<br>"
@@ -62,7 +62,7 @@ def build_page(UN, PW, EM):
 class MainHandler(webapp2.RequestHandler):
 
     def get(self):
-        content = build_page("","","")
+        content = build_page(True, True, True, True)
         self.response.write(content)
 
     def post(self):
@@ -86,13 +86,13 @@ class Welcome(webapp2.RequestHandler):
         eMail = self.request.get('email')
 
         if not valid_username(userName):
-            content = build_page(False, True, True)
+            content = build_page(userName, True, True, False)
             self.response.write(content)
         elif not valid_password(passWord) or (passWord != passVerify):
-            content = build_page(True, False, True)
+            content = build_page(True, passWord, True, False)
             self.response.write(content)
         elif not valid_email(eMail):
-            content = build_page(True, True, False)
+            content = build_page(True, True, eMail, False)
             self.response.write(content)
         else:
             self.response.write("Welcome, " + userName + "!")
