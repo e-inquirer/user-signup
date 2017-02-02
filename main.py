@@ -1,6 +1,21 @@
 import webapp2
+import re
 
-def build_page(textarea_content):
+
+user_regEx = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+def valid_username(username):
+    return username and user_regEx.match(username)
+
+pass_regEx = re.compile(r"^.{3,20}$")
+def valid_password(password):
+    return password and pass_regEx.match(password)
+
+email_regEx = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
+def valid_email(email):
+    return not email or email_regEx.match(email)
+
+
+def build_page(UN, PW, EM):
 
     # form fields
     username_label = "<label>Username: </label>"
@@ -12,15 +27,32 @@ def build_page(textarea_content):
     email_label = "<label>Email (optional): </label>"
     email_input = "<input type='email' name='email' />"
 
+    if UN:
+        username_html = username_label + username_input + "<br>"
+    else:
+        username_html = username_label + username_input + "INVALID USERNAME" + "<br>"
+
+    if PW:
+        pw_html = pw_label + pw_input + "<br>" 
+    else:
+        pw_html = pw_label + pw_input + "INVALID PASSWORD" + "<br>" 
+
+    pw_verify_html = pwVerify_label + pwVerify_input + "<br>" 
+
+    if EM:
+        email_html = email_label + email_input + "<br>"
+    else:
+        email_html = email_label + email_input + "INVALID EMAIL" + "<br>"
+
     # submit button
     submit_button = "<input type='submit' />"
 
     # signup form
     form = ("<form action=/welcome method='post'>" +
-            username_label + username_input + "<br>" +
-            pw_label + pw_input + "<br>" +
-            pwVerify_label + pwVerify_input + "<br>" +
-            email_label + email_input + "<br>" +            
+            username_html +
+            pw_html +
+            pw_verify_html +
+            email_html +            
             submit_button + "<form/>")
     
     header = "<h2>Signup</h2>"
@@ -30,7 +62,7 @@ def build_page(textarea_content):
 class MainHandler(webapp2.RequestHandler):
 
     def get(self):
-        content = build_page("")
+        content = build_page("","","")
         self.response.write(content)
 
     def post(self):
@@ -41,14 +73,29 @@ class MainHandler(webapp2.RequestHandler):
 
         # validation test stub
         self.response.write("<p>"+userName+"</p><p>"+passWord+"</p><p>"+passVerify+"</p><p>"+eMail+"</p>")
+############
 
 
 class Welcome(webapp2.RequestHandler):
     # validation test stub
 
     def post(self):
-        userName = self.request.get("username")
-        self.response.write("Welcome, " + userName + "!")
+        userName = self.request.get('username')
+        passWord = self.request.get('password')
+        passVerify = self.request.get('pwVerify')
+        eMail = self.request.get('email')
+
+        if not valid_username(userName):
+            content = build_page(False, True, True)
+            self.response.write(content)
+        elif not valid_password(passWord) or (passWord != passVerify):
+            content = build_page(True, False, True)
+            self.response.write(content)
+        elif not valid_email(eMail):
+            content = build_page(True, True, False)
+            self.response.write(content)
+        else:
+            self.response.write("Welcome, " + userName + "!")
 
 
 app = webapp2.WSGIApplication([
