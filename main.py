@@ -35,8 +35,8 @@ def build_page(UN, PW, EM, errFlag):
     form_tag = "<form action=/signup method='post'>"
     
     if errFlag:
-        username_input = "<input type='text' name='username' value=" + UN + " />"
-        email_input = "<input type='email' name='email' value=" + EM + " />"
+        username_input = "<input type='text' name='username' value='" + str(UN) + "' />"
+        email_input = "<input type='email' name='email' value='" + str(EM) + "' />"
         if not valid_username(UN):
             username_html = username_label + username_input + "INVALID USERNAME" + "<br>"           
             form_tag = "<form action=/signup method='post'>"
