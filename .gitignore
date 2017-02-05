@@ -4,3 +4,6 @@ __pycache__/
 
 # Swap files
 *.swp
+
+# Junk files
+temp.py

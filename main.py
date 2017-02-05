@@ -15,40 +15,51 @@ def valid_email(email):
     return not email or email_regEx.match(email)
 
 
-def build_page(UN, PW, EM, MAIN):
+def build_page(UN, PW, EM, errFlag):
 
     # form fields
     username_label = "<label>Username: </label>"
-    username_input = "<input type='text' name='username' value=''/>"
+    username_input = "<input type='text' name='username' />"
     pw_label = "<label>Password: </label>"
-    pw_input = "<input type='password' name='password' value='' />"
+    pw_input = "<input type='password' name='password'  />"
     pwVerify_label = "<label>Verify Password: </label>"
-    pwVerify_input = "<input type='password' name='pwVerify' value='' />"
+    pwVerify_input = "<input type='password' name='pwVerify'  />"
     email_label = "<label>Email (optional): </label>"
-    email_input = "<input type='email' name='email' value='' />"
-
-    if UN or MAIN:
-        username_html = username_label + username_input + "<br>"
-    else:
-        username_html = username_label + username_input + "INVALID USERNAME" + "<br>"
-
-    if PW or MAIN:
-        pw_html = pw_label + pw_input + "<br>" 
-    else:
-        pw_html = pw_label + pw_input + "INVALID PASSWORD or VERIFICATION DOESN'T MATCH" + "<br>" 
-
+    email_input = "<input type='email' name='email'  />"
+  
+    username_html = username_label + username_input + "<br>"
+    pw_html = pw_label + pw_input + "<br>" 
     pw_verify_html = pwVerify_label + pwVerify_input + "<br>" 
+    email_html = email_label + email_input + "<br>"
+#    form_tag = "<form action=/welcome method='post'>"
+    form_tag = "<form action=/signup method='post'>"
+    
+    if errFlag:
+        username_input = "<input type='text' name='username' value=" + UN + " />"
+        email_input = "<input type='email' name='email' value=" + EM + " />"
+        if not valid_username(UN):
+            username_html = username_label + username_input + "INVALID USERNAME" + "<br>"           
+            form_tag = "<form action=/signup method='post'>"
+#        else:
+#            form_tag = "<form action=/welcome method='post'>"
 
-    if EM or MAIN:
-        email_html = email_label + email_input + "<br>"
-    else:
-        email_html = email_label + email_input + "INVALID EMAIL" + "<br>"
+        if not valid_password(PW):
+            pw_html = pw_label + pw_input + "INVALID PASSWORD or VERIFICATION DOESN'T MATCH" + "<br>" 
+            form_tag = "<form action=/signup method='post'>"
+#        else:
+#            form_tag = "<form action=/welcome method='post'>"
+        
+        if not valid_email(EM):
+            email_html = email_label + email_input + "INVALID EMAIL" + "<br>"
+            form_tag = "<form action=/signup method='post'>"
+#    else:
+#        form_tag = "<form action=/welcome method='post'>"
 
     # submit button
     submit_button = "<input type='submit' />"
 
     # signup form
-    form = ("<form action=/welcome method='post'>" +
+    form = (form_tag +
             username_html +
             pw_html +
             pw_verify_html +
@@ -62,7 +73,7 @@ def build_page(UN, PW, EM, MAIN):
 class MainHandler(webapp2.RequestHandler):
 
     def get(self):
-        content = build_page(True, True, True, True)
+        content = build_page("", "", "", False)
         self.response.write(content)
 
     def post(self):
@@ -71,9 +82,39 @@ class MainHandler(webapp2.RequestHandler):
         passVerify = self.request.get('pwVerify')
         eMail = self.request.get('email')
 
-        # validation test stub
-        self.response.write("<p>"+userName+"</p><p>"+passWord+"</p><p>"+passVerify+"</p><p>"+eMail+"</p>")
+        if valid_username(userName) and valid_password(passWord) and passWord != passVerify and valid_email(eMail):
+            error_flag = False
+            self.redirect('/welcome')
+        else:
+            error_flag = True
+            self.redirect('/signup')
+    
+        content = build_page(userName, passWord, eMail, error_flag)
+        self.response.write(content)
+
+
+#
+#        # validation test stub
+#        self.response.write("<p>"+userName+"</p><p>"+passWord+"</p><p>"+passVerify+"</p><p>"+eMail+"</p>")
 ############
+
+class Signup(webapp2.RequestHandler):
+
+    def post(self):
+        userName = self.request.get('username')
+        passWord = self.request.get('password')
+        passVerify = self.request.get('pwVerify')
+        eMail = self.request.get('email')
+        
+        if valid_username(userName) and valid_password(passWord) and passWord != passVerify and valid_email(eMail):
+            error_flag = False
+            self.redirect('/welcome')
+        else:
+            error_flag = True
+#            self.redirect('/signup')
+    
+        content = build_page(userName, passWord, eMail, error_flag)
+        self.response.write(content)
 
 
 class Welcome(webapp2.RequestHandler):
@@ -81,25 +122,22 @@ class Welcome(webapp2.RequestHandler):
 
     def post(self):
         userName = self.request.get('username')
-        passWord = self.request.get('password')
-        passVerify = self.request.get('pwVerify')
-        eMail = self.request.get('email')
+#        passWord = self.request.get('password')
+#        passVerify = self.request.get('pwVerify')
+#        eMail = self.request.get('email')
+#
+#        if valid_username(userName) and valid_password(passWord) and passWord != passVerify and valid_email(eMail):
+#            error_flag = False
+#            self.redirect('/welcome')
+#        else:
+#            error_flag = True
+#            self.redirect('/signup')
 
-        if not valid_username(userName):
-            content = build_page(userName, True, True, False)
-            self.response.write(content)
-        elif not valid_password(passWord) or (passWord != passVerify):
-            content = build_page(True, passWord, True, False)
-            self.response.write(content)
-        elif not valid_email(eMail):
-            content = build_page(True, True, eMail, False)
-            self.response.write(content)
-        else:
-            self.response.write("Welcome, " + userName + "!")
+        self.response.write("Welcome, " + userName + "!")
 
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-#    ('/signup', Signup),
+    ('/signup', Signup),
     ('/welcome', Welcome)
 ], debug=True)
