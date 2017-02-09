@@ -109,7 +109,8 @@ class MainHandler(webapp2.RequestHandler):
 class Welcome(webapp2.RequestHandler):
 
     def get(self):
-        userName = self.request.get('username')
+#        userName = self.request.get('username')
+        userName = dictionary['UN']
 #        passWord = self.request.get('password')
 #        passVerify = self.request.get('pwVerify')
 #        eMail = self.request.get('email')
