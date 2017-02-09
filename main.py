@@ -2,7 +2,7 @@ import webapp2
 import re
 
 
-dictionary = {'UN':'', 'PW':'', 'PV':'', 'EM':''}
+dictionary = {'UN':'', 'PW':'', 'PV':'', 'EM':'', 'counter':0}
 # dictionary = {0:'', 1:'', 2:'', 3:''}
 
 
@@ -20,6 +20,7 @@ def valid_email(email):
 
 
 def build_page(DICT):
+
 
     # form fields
     username_label = "<label>Username: </label>"
@@ -39,19 +40,21 @@ def build_page(DICT):
     form_tag = "<form action=/ method='post'>"
     
     # if len(DICT) > 0:
-#    if DICT:
-    if not valid_username(DICT['UN']):
-        username_html = username_label + username_input + "INVALID USERNAME" + "<br>"           
+    if dictionary['counter'] > 0:
+        if not valid_username(DICT['UN']):
+            username_html = username_label + username_input + "INVALID USERNAME" + "<br>"           
 
-    if not valid_password(DICT['PW']):
-        pw_html = pw_label + pw_input + "INVALID PASSWORD" + "<br>" 
+        if not valid_password(DICT['PW']):
+            pw_html = pw_label + pw_input + "INVALID PASSWORD" + "<br>" 
 
-    if DICT['PV'] != DICT['PW']:
-#    if not valid_password(DICT['PW']):
-        pw_verify_html = pwVerify_label + pwVerify_input + "VERIFICATION DOES NOT MATCH" + "<br>"
-    
-    if not valid_email(DICT['EM']):
-        email_html = email_label + email_input + "INVALID EMAIL" + "<br>"
+        if DICT['PV'] != DICT['PW'] or DICT['PV'] == '':
+#        if not valid_password(DICT['PW']):
+            pw_verify_html = pwVerify_label + pwVerify_input + "VERIFICATION DOES NOT MATCH" + "<br>"
+        
+        if not valid_email(DICT['EM']):
+            email_html = email_label + email_input + "INVALID EMAIL" + "<br>"
+
+    dictionary['counter'] += 1
 
     # submit button
     submit_button = "<input type='submit' />"
@@ -112,6 +115,7 @@ class Welcome(webapp2.RequestHandler):
 #        eMail = self.request.get('email')
 
         self.response.write("Welcome, " + userName + "!")
+
 
 
 app = webapp2.WSGIApplication([
